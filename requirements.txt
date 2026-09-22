@@ -1,0 +1,8 @@
+# Install PyTorch for your CPU/CUDA platform first when necessary.
+numpy>=1.26
+torch>=2.2
+torchvision>=0.17
+pillow>=10.0
+scipy>=1.11
+timm>=1.0
+gdown>=5.0

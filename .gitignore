@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*.so
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+build/
+dist/
+
+# Environments and editors
+.venv/
+venv/
+.idea/
+.vscode/
+.DS_Store
+
+# Research data, models, and generated outputs
+data/
+datasets/
+checkpoints/
+models/
+outputs/
+runs/
+wandb/
+artifacts/
+*.ckpt
+*.pth
+*.pt
+*.onnx
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.tar
+*.tar.gz
+
+# Local archives and logs
+*.zip
+*.log
+*.lock
+*.tmp
