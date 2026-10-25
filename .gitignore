@@ -17,14 +17,14 @@ venv/
 .DS_Store
 
 # Research data, models, and generated outputs
-data/
-datasets/
-checkpoints/
-models/
-outputs/
-runs/
-wandb/
-artifacts/
+/data/
+/datasets/
+/checkpoints/
+/models/
+/outputs/
+/runs/
+/wandb/
+/artifacts/
 *.ckpt
 *.pth
 *.pt
