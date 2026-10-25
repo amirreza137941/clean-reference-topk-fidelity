@@ -6,8 +6,7 @@ from topk_fidelity.query import AveragedQueryOracle, PerDrawQueryOracle
 class CountingDefense:
     def draw_logits(self, candidate: torch.Tensor, draws: int) -> torch.Tensor:
         parts = [
-            torch.full((candidate.shape[0], 2), float(index))
-            for index in range(draws)
+            torch.full((candidate.shape[0], 2), float(index)) for index in range(draws)
         ]
         return torch.stack(parts, dim=0)
 

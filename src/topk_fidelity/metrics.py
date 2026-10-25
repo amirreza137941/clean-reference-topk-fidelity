@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Dict
 
 import torch
 
@@ -68,8 +67,8 @@ def rank_weights(k: int, tau: float, *, device: torch.device) -> torch.Tensor:
 class MetricBatch:
     """Per-example values and their aggregate summary."""
 
-    summary: Dict[str, float]
-    values: Dict[str, torch.Tensor]
+    summary: dict[str, float]
+    values: dict[str, torch.Tensor]
     reference_set: torch.Tensor
     predicted_set: torch.Tensor
 
@@ -149,7 +148,7 @@ def evaluate_draws(
     *,
     k: int,
     tau: float = 0.5,
-) -> Dict[str, torch.Tensor]:
+) -> dict[str, torch.Tensor]:
     """Average per-request metrics across stochastic defense draws.
 
     ``draw_logits`` must have shape ``[draws, batch, classes]``. This function

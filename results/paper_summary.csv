@@ -1,14 +1,18 @@
 dataset,k,epsilon,method,clean_exact_pct,attacked_exact_pct,change_pp,status
-CIFAR-10,2,2/255,Robust,46.500,37.500,-9.000,audited
-CIFAR-10,2,2/255,RND utility-match,46.748,45.439,-1.309,audited
-CIFAR-10,2,2/255,RFD utility-match,46.927,45.884,-1.043,audited
-CIFAR-10,2,2/255,AAA-Linear,33.000,13.333,-19.667,audited
-CIFAR-10,2,2/255,Full,57.711,50.122,-7.589,audited
-CIFAR-100,2,2/255,Robust,45.600,13.733,-31.867,audited
-CIFAR-100,2,2/255,Full-sigma0,87.000,31.167,-55.833,audited
-CIFAR-100,2,2/255,Noise-only,45.308,39.776,-5.531,audited
-CIFAR-100,2,2/255,Full,85.422,35.022,-50.399,audited
-ImageNet-ResNet-reference,5,4/255,Robust,2.400,1.267,-1.133,audited
-ImageNet-ResNet-reference,5,4/255,Full-sigma0,10.400,3.800,-6.600,audited
-ImageNet-ResNet-reference,5,4/255,Noise-only,2.129,1.714,-0.414,audited
-ImageNet-ResNet-reference,5,4/255,Full,9.732,3.335,-6.396,audited
+CIFAR-10,2,2/255,Robust,46.500,37.500,-9.000,manuscript_snapshot
+CIFAR-10,2,2/255,RND utility-match,46.748,45.439,-1.309,manuscript_snapshot
+CIFAR-10,2,2/255,RFD utility-match,46.927,45.884,-1.043,manuscript_snapshot
+CIFAR-10,2,2/255,AAA-Linear,33.000,13.333,-19.667,manuscript_snapshot
+CIFAR-10,2,2/255,Full,57.711,50.122,-7.588,manuscript_snapshot
+CIFAR-100,2,2/255,Robust,45.600,13.733,-31.867,manuscript_snapshot
+CIFAR-100,2,2/255,Full-sigma0,87.000,31.167,-55.833,manuscript_snapshot
+CIFAR-100,2,2/255,Noise-only,45.308,39.776,-5.531,manuscript_snapshot
+CIFAR-100,2,2/255,Full,85.422,35.022,-50.399,manuscript_snapshot
+ImageNet-ResNet-reference,5,4/255,Robust,2.400,1.267,-1.133,manuscript_snapshot
+ImageNet-ResNet-reference,5,4/255,Full-sigma0,10.400,3.800,-6.600,manuscript_snapshot
+ImageNet-ResNet-reference,5,4/255,Noise-only,2.129,1.714,-0.414,manuscript_snapshot
+ImageNet-ResNet-reference,5,4/255,Full,9.732,3.335,-6.396,manuscript_snapshot
+ImageNet-ViT-reference,5,4/255,Robust,2.500,1.000,-1.500,manuscript_snapshot
+ImageNet-ViT-reference,5,4/255,Full-sigma0,10.000,2.067,-7.933,manuscript_snapshot
+ImageNet-ViT-reference,5,4/255,Noise-only,2.248,1.882,-0.367,manuscript_snapshot
+ImageNet-ViT-reference,5,4/255,Full,8.901,2.062,-6.839,manuscript_snapshot

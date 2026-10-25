@@ -7,7 +7,6 @@ import re
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 MAX_TRACKED_BYTES = 10 * 1024 * 1024
 TEXT_SUFFIXES = {
@@ -24,7 +23,15 @@ TEXT_SUFFIXES = {
     ".yaml",
     ".yml",
 }
-SKIP_PARTS = {".git", ".venv", "__pycache__", ".pytest_cache"}
+SKIP_PARTS = {
+    ".git",
+    ".venv",
+    "__pycache__",
+    ".pytest_cache",
+    ".ruff_cache",
+    "build",
+    "dist",
+}
 REQUIRED = {
     ".github/workflows/ci.yml",
     ".gitignore",
@@ -36,6 +43,13 @@ REQUIRED = {
     "docs/REPRODUCIBILITY.md",
     "src/topk_fidelity/defense.py",
     "src/topk_fidelity/metrics.py",
+    "src/topk_fidelity/attacks/adaptive.py",
+    "src/topk_fidelity/attacks/racing.py",
+    "src/topk_fidelity/models/checkpoints.py",
+    "configs/cifar10.json",
+    "configs/cifar100.json",
+    "docs/MIGRATION.md",
+    "docs/VALIDATION.md",
 }
 
 FORBIDDEN = {
@@ -51,7 +65,10 @@ def files() -> list[Path]:
     return [
         path
         for path in ROOT.rglob("*")
-        if path.is_file() and not any(part in SKIP_PARTS for part in path.parts)
+        if path.is_file()
+        and not any(
+            part in SKIP_PARTS or part.endswith(".egg-info") for part in path.parts
+        )
     ]
 
 

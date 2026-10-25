@@ -1,15 +1,5 @@
-"""Attack utilities with explicit query-budget accounting."""
+"""The original SquareAdaptive and SquareRacing searches."""
 
-from .square import (
-    exact_set_attack_margin,
-    square_adaptive_query_plan,
-    square_racing_query_plan,
-    square_reference_p_selection,
-)
+from .runner import run_square_batch
 
-__all__ = [
-    "exact_set_attack_margin",
-    "square_adaptive_query_plan",
-    "square_racing_query_plan",
-    "square_reference_p_selection",
-]
+__all__ = ["run_square_batch"]

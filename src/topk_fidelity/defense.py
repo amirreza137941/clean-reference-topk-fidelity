@@ -1,45 +1,24 @@
-"""Clean-reference Top-k strengthening and stochastic output wrapper."""
+"""Original request-conditioned strengthening and Gaussian input noise."""
 
 from __future__ import annotations
-
-from dataclasses import dataclass
 
 import torch
 from torch import nn
 
+from .config import DefenseConfig, positive_integer
 from .metrics import ranked_topk
 
 
-@dataclass(frozen=True)
-class DefenseConfig:
-    """Hyperparameters for the clean-reference wrapper."""
-
-    top_k: int
-    alpha: float
-    epsilon: float
-    steps: int
-    sigma: float
-    top1_weight: float = 1.0
-    set_weight: float = 4.0
-
-    def __post_init__(self) -> None:
-        if self.top_k < 1:
-            raise ValueError("top_k must be positive")
-        if self.alpha < 0 or self.epsilon < 0 or self.sigma < 0:
-            raise ValueError("alpha, epsilon, and sigma must be non-negative")
-        if self.steps < 0:
-            raise ValueError("steps must be non-negative")
-        if self.top1_weight < 0 or self.set_weight < 0:
-            raise ValueError("objective weights must be non-negative")
-
-
 class CleanReferenceTopKDefense:
-    """Strengthen a clean reference Top-k set, then optionally add noise.
+    """Return one FULL logit vector per image and defended request.
 
-    The standard model defines the reference set on the current request. A
-    differentiable model supplies the strengthening gradient, and an output
-    model returns the defended scores. These can be the same network or three
-    different networks.
+    standard_model defines the ONLINE reference on the current request input.
+    That set is fixed during this request's strengthening steps and recomputed
+    on the next request. It differs from the CLEAN set supplied to the attack.
+
+    gradient_model and output_model are the normalized robust anchor in the
+    paper. Models accept [0,1] pixels and normalize internally. Use frozen
+    parameters and eval mode; this wrapper requests only input gradients.
     """
 
     def __init__(
@@ -54,10 +33,20 @@ class CleanReferenceTopKDefense:
         self.output_model = output_model
         self.config = config
 
+    @property
+    def sigma(self) -> float:
+        """Stochasticity declaration expected by the original attack engine."""
+        return self.config.sigma
+
     def objective(
         self, logits: torch.Tensor, reference_topk: torch.Tensor
     ) -> torch.Tensor:
-        """Return the weighted Top-1 and set-boundary strengthening margin."""
+        """Return w1 * winner margin + wk * exact-set boundary margin.
+
+        The winner competes with EVERY other class, including selected ones.
+        The set margin compares the weakest selected and strongest outside
+        logits. Full class scores are required for both comparisons.
+        """
 
         if logits.ndim != 2 or reference_topk.ndim != 2:
             raise ValueError("logits and reference_topk must both be rank two")
@@ -66,6 +55,8 @@ class CleanReferenceTopKDefense:
         if reference_topk.shape[1] != self.config.top_k:
             raise ValueError("reference_topk width must equal config.top_k")
 
+        if self.config.top_k >= logits.shape[1]:
+            raise ValueError("top_k must be smaller than the number of classes")
         selected = logits.gather(1, reference_topk)
         reference_top1 = reference_topk[:, :1]
 
@@ -80,34 +71,44 @@ class CleanReferenceTopKDefense:
         top1_margin = selected[:, 0] - strongest_not_top1
         set_margin = selected.min(1).values - strongest_outside
         return (
-            self.config.top1_weight * top1_margin
-            + self.config.set_weight * set_margin
+            self.config.top1_weight * top1_margin + self.config.set_weight * set_margin
         )
 
     def reference_set(self, x: torch.Tensor) -> torch.Tensor:
+        """Recompute the reference on this request, including attacked inputs."""
         with torch.no_grad():
             return ranked_topk(self.standard_model(x), self.config.top_k)
 
-    def strengthen(
-        self, x: torch.Tensor, reference_topk: torch.Tensor
-    ) -> torch.Tensor:
-        """Apply projected sign-gradient ascent inside an L-infinity ball."""
+    def strengthen(self, x: torch.Tensor, reference_topk: torch.Tensor) -> torch.Tensor:
+        """Original projected sign-gradient ascent in pixel coordinates.
 
-        clean = x.detach()
-        strengthened = clean.clone()
+        Projection is around the REQUEST input, not the attack's clean input.
+        This does not guarantee monotone margins or certified robustness.
+        """
+        if self.config.steps and torch.is_inference_mode_enabled():
+            raise RuntimeError(
+                "strengthening needs input gradients; use torch.no_grad(), "
+                "not torch.inference_mode(), around defended requests"
+            )
+
+        request = x.detach()
+        strengthened = request.clone()
         for _ in range(self.config.steps):
             with torch.enable_grad():
                 variable = strengthened.detach().requires_grad_(True)
                 score = self.objective(self.gradient_model(variable), reference_topk)
-                gradient = torch.autograd.grad(score.sum(), variable, only_inputs=True)[0]
+                gradient = torch.autograd.grad(score.sum(), variable, only_inputs=True)[
+                    0
+                ]
             strengthened = strengthened + self.config.alpha * gradient.sign()
-            delta = (strengthened - clean).clamp(
+            delta = (strengthened - request).clamp(
                 -self.config.epsilon, self.config.epsilon
             )
-            strengthened = (clean + delta).clamp(0.0, 1.0).detach()
+            strengthened = (request + delta).clamp(0.0, 1.0).detach()
         return strengthened
 
     def __call__(self, x: torch.Tensor) -> torch.Tensor:
+        """One independent response with ALL class logits."""
         reference = self.reference_set(x)
         defended = self.strengthen(x, reference)
         if self.config.sigma > 0:
@@ -118,8 +119,11 @@ class CleanReferenceTopKDefense:
             return self.output_model(defended)
 
     def draw_logits(self, x: torch.Tensor, draws: int) -> torch.Tensor:
-        """Return independent defended responses with shape [draws,batch,class]."""
+        """Independent responses shaped [draws,batch,classes].
 
-        if int(draws) < 1:
-            raise ValueError("draws must be positive")
-        return torch.stack([self(x) for _ in range(int(draws))], dim=0)
+        Reference, strengthening and fresh noise are recomputed per request.
+        No clean-target or transformed-input cache is shared across requests.
+        """
+
+        positive_integer(draws, "draws")
+        return torch.stack([self(x) for _ in range(draws)], dim=0)

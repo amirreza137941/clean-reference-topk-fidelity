@@ -18,9 +18,7 @@ def test_metric_batch_separates_top1_and_exact_set() -> None:
     reference_logits = torch.tensor([[5.0, 4.0, 1.0, 0.0]])
     defended_logits = torch.tensor([[5.0, 1.0, 4.0, 0.0]])
     labels = torch.tensor([0])
-    batch = compute_metric_batch(
-        defended_logits, labels, reference_logits, k=2
-    )
+    batch = compute_metric_batch(defended_logits, labels, reference_logits, k=2)
     assert batch.summary["top1"] == 100.0
     assert batch.summary["reference_top1_match"] == 100.0
     assert batch.summary["exact_set"] == 0.0
