@@ -1,10 +1,12 @@
-# Security policy
+# Security and local inputs
 
-Please do not open a public issue for a vulnerability that could affect users
-or expose private research infrastructure. During anonymous review, use the
-private contact channel supplied with the artifact. After de-anonymization,
-this file should be updated with the maintainers' security contact address.
+The archive contains source and small summaries. It does not include private
+credentials, datasets or pretrained checkpoint weights.
 
-The repository does not ship datasets, credentials, pretrained checkpoints,
-or executable binaries. Never commit tokens, SSH keys, cloud URLs containing
-signatures, or machine-specific paths.
+The cleaned CIFAR loader uses PyTorch tensor state dictionaries with
+`weights_only=True`. Legacy executable-object checkpoints should first be
+exported to a state dictionary in your original trusted environment. Historical
+programs retain their original loading behavior.
+
+A real maintainer contact has not been supplied. Fill that contact before
+publishing a release; no email address or private reporting channel is assumed.

@@ -44,9 +44,7 @@ def main() -> None:
     with torch.no_grad():
         reference_logits = reference_model(images)
     defended_logits = defense(images)
-    metrics = compute_metric_batch(
-        defended_logits, labels, reference_logits, k=2
-    )
+    metrics = compute_metric_batch(defended_logits, labels, reference_logits, k=2)
     print(metrics.summary)
 
 

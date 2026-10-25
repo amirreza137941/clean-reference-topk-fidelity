@@ -1,0 +1,250 @@
+{
+  "source_release": "0.1.0",
+  "frozen_sources_unchanged": true,
+  "symbols": [
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "exact_set_attack_margin",
+      "source_lines": [
+        38,
+        47
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/objectives.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "per_draw_exact_set_survival_score",
+      "source_lines": [
+        50,
+        72
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/objectives.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_topk_prior_baseline_attack_cifar10.py",
+      "original_symbol": "square_reference_p_selection",
+      "source_lines": [
+        1655,
+        1685
+      ],
+      "source_file_sha256": "4f657aecd5388e3928d909a6d9162771c8f68044f023e68295f2e575eb555535",
+      "destination": "attacks/plans.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_topk_prior_baseline_attack_cifar10.py",
+      "original_symbol": "square_adaptive_query_plan",
+      "source_lines": [
+        1688,
+        1746
+      ],
+      "source_file_sha256": "4f657aecd5388e3928d909a6d9162771c8f68044f023e68295f2e575eb555535",
+      "destination": "attacks/plans.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_topk_prior_baseline_attack_cifar10.py",
+      "original_symbol": "square_racing_query_plan",
+      "source_lines": [
+        1749,
+        1825
+      ],
+      "source_file_sha256": "4f657aecd5388e3928d909a6d9162771c8f68044f023e68295f2e575eb555535",
+      "destination": "attacks/plans.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "square_vertical_stripe_initialization",
+      "source_lines": [
+        272,
+        281
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/proposals.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "square_reference_linf_proposal",
+      "source_lines": [
+        284,
+        313
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/proposals.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "_archive_accepted_candidates",
+      "source_lines": [
+        316,
+        330
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/archive.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "_insert_racing_candidate",
+      "source_lines": [
+        406,
+        426
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "attacks/archive.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_topk_prior_baseline_attack_cifar10.py",
+      "original_symbol": "square_adaptive_attack_budget",
+      "source_lines": [
+        1942,
+        2053
+      ],
+      "source_file_sha256": "4f657aecd5388e3928d909a6d9162771c8f68044f023e68295f2e575eb555535",
+      "destination": "attacks/adaptive.py",
+      "renames": {
+        "VariableQueryOracle": "AveragedQueryOracle"
+      }
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_topk_prior_baseline_attack_cifar10.py",
+      "original_symbol": "square_racing_attack_budget",
+      "source_lines": [
+        2081,
+        2220
+      ],
+      "source_file_sha256": "4f657aecd5388e3928d909a6d9162771c8f68044f023e68295f2e575eb555535",
+      "destination": "attacks/racing.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "stable_int",
+      "source_lines": [
+        20,
+        21
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "randomness.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/topk_cifar100_square_attack_core_r4.py",
+      "original_symbol": "seed_everything",
+      "source_lines": [
+        24,
+        31
+      ],
+      "source_file_sha256": "0dc459984ce69173ab83bfceb0b8fb824a5d38b565550c4a6b4ea515c30dded7",
+      "destination": "randomness.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/train_resnet20_dual_backbone_top1_set2_cifar10.py",
+      "original_symbol": "ProjectionBasicBlock",
+      "source_lines": [
+        168,
+        186
+      ],
+      "source_file_sha256": "d4ac979ee4e3fb25572afe8870b23ea158739033eae1c08213c0dd1c0bee5eb1",
+      "destination": "models/cifar_anchor.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/train_resnet20_dual_backbone_top1_set2_cifar10.py",
+      "original_symbol": "CIFARResNet20",
+      "source_lines": [
+        189,
+        213
+      ],
+      "source_file_sha256": "d4ac979ee4e3fb25572afe8870b23ea158739033eae1c08213c0dd1c0bee5eb1",
+      "destination": "models/cifar_anchor.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/train_resnet20_dual_backbone_top1_set2_cifar10.py",
+      "original_symbol": "DualBackboneDefense",
+      "source_lines": [
+        227,
+        272
+      ],
+      "source_file_sha256": "d4ac979ee4e3fb25572afe8870b23ea158739033eae1c08213c0dd1c0bee5eb1",
+      "destination": "models/cifar_anchor.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_top1_set2_gated_cifar10.py",
+      "original_symbol": "LambdaLayer",
+      "source_lines": [
+        282,
+        288
+      ],
+      "source_file_sha256": "ed9fc29f30d74a17b9062b8188c6702535ba726a71acb8159bc368e3e03458c8",
+      "destination": "models/cifar_reference.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_top1_set2_gated_cifar10.py",
+      "original_symbol": "OptionABasicBlock",
+      "source_lines": [
+        291,
+        313
+      ],
+      "source_file_sha256": "ed9fc29f30d74a17b9062b8188c6702535ba726a71acb8159bc368e3e03458c8",
+      "destination": "models/cifar_reference.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_top1_set2_gated_cifar10.py",
+      "original_symbol": "ProjectionBasicBlock",
+      "source_lines": [
+        316,
+        335
+      ],
+      "source_file_sha256": "ed9fc29f30d74a17b9062b8188c6702535ba726a71acb8159bc368e3e03458c8",
+      "destination": "models/cifar_reference.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/evaluate_top1_set2_gated_cifar10.py",
+      "original_symbol": "CIFARResNet20",
+      "source_lines": [
+        338,
+        369
+      ],
+      "source_file_sha256": "ed9fc29f30d74a17b9062b8188c6702535ba726a71acb8159bc368e3e03458c8",
+      "destination": "models/cifar_reference.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/train_resnet20_teacher_top2_adversarial_cifar10.py",
+      "original_symbol": "set2_margin_loss",
+      "source_lines": [
+        426,
+        435
+      ],
+      "source_file_sha256": "909f8b9b28092d9a846edd435313c18b9974e12f1fa89ac34ddefdba29daffce",
+      "destination": "training/losses.py",
+      "renames": {}
+    },
+    {
+      "original_file": "experiments/frozen/train_resnet20_teacher_top2_adversarial_cifar10.py",
+      "original_symbol": "distillation_loss",
+      "source_lines": [
+        438,
+        447
+      ],
+      "source_file_sha256": "909f8b9b28092d9a846edd435313c18b9974e12f1fa89ac34ddefdba29daffce",
+      "destination": "training/losses.py",
+      "renames": {}
+    }
+  ]
+}

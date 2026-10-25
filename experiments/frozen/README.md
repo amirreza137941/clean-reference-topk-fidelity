@@ -47,5 +47,7 @@ recorded artifact hashes.
 - `test_*`: stage-level self-tests;
 - `*_common.py`, `*_core_*.py`: shared definitions and attack primitives.
 
-The current ViT cross-architecture confirmatory family ends in `VR4`. Its
-result is pending until the corresponding finalizer and auditor pass.
+The ViT cross-architecture confirmatory family ends in `VR4`. Its completed
+result summary is represented in the revised manuscript table. The Python
+sources in this directory are unchanged in v0.2.0; use the clean package for
+readable reusable computation and these original programs for recorded stages.

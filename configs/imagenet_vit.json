@@ -1,0 +1,48 @@
+{
+  "dataset": "imagenet",
+  "reference_family": "vit_b16",
+  "defense": {
+    "top_k": 5,
+    "alpha": 0.00392156862745098,
+    "epsilon": 0.01568627450980392,
+    "steps": 4,
+    "sigma": 0.025,
+    "top1_weight": 1.0,
+    "set_weight": 4.0
+  },
+  "attack_epsilon": 0.01568627450980392,
+  "api_budget": 5000,
+  "p_init": 0.05,
+  "search_seeds": [
+    474091,
+    585101,
+    696113
+  ],
+  "reevaluation_draws": 1000,
+  "adaptive": {
+    "search_eot": 1,
+    "refresh_eot": 1,
+    "confirm_candidates": 5,
+    "confirm_fraction": 0.2,
+    "objective": "exact_set_margin_of_mean_logits"
+  },
+  "racing": {
+    "search_eot": 5,
+    "refresh_eot": 5,
+    "pool_size": 8,
+    "race_interval": 25,
+    "race_eot": 5,
+    "confirm_fraction": 0.25,
+    "score_temperature": 0.1,
+    "objective": "mean_per_draw_sigmoid_exact_set_margin"
+  },
+  "deterministic_adaptive_refresh": 1,
+  "method_attack": {
+    "robust": "SquareAdaptive",
+    "full_sigma0": "SquareRacing",
+    "noise_only": "SquareAdaptive",
+    "full": "SquareAdaptive"
+  },
+  "family_selection": "disjoint_pilot_frozen_per_method",
+  "mean_logit_reduction": "stack_mean"
+}

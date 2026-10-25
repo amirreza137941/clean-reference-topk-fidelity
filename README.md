@@ -1,142 +1,163 @@
 # Clean-Reference Top-k Fidelity
 
-Code and protocol snapshot for studying **exact unordered Top-k set fidelity**
-under adversarial queries. The repository contains a compact reusable package,
-audited query-accounting utilities, and the frozen experiment programs used for
-CIFAR-10, CIFAR-100, ImageNet, and the ongoing cross-architecture ViT study.
+Readable, reusable code for the original request-conditioned Top-k defense and
+its score-based SquareAdaptive / SquareRacing evaluation. The refactor keeps
+the original margin objective, input updates, noise, proposal RNG order,
+candidate archives and query allocations. Existing experiment programs remain
+available with their source identities.
 
-> **Double-blind review notice.** This copy is intentionally anonymized. Do not
-> add author names, personal URLs, identifying badges, or a public personal
-> fork while the work is under review. See
-> [docs/ANONYMOUS_ARTIFACT.md](docs/ANONYMOUS_ARTIFACT.md).
+**English** · [راهنمای فارسی](README_FA.md) · [Migration map](docs/MIGRATION.md)
 
-![Method overview](docs/assets/method_overview.svg)
+## Start here
 
-## Research question
+Install a PyTorch build for your CPU/CUDA platform, then install the package
+from the repository root:
 
-For a clean input \(x\), let a reference model define an unordered set
-\(S_k(x)\) of its Top-k classes. For a defended model \(f_D\), we measure the
-probability that an independently sampled defended response on a possibly
-attacked input \(x'\) returns exactly that set:
+```bash
+python -m pip install -e ".[test,dev]"
+python -m topk_fidelity demo --attack SquareAdaptive
+python -m topk_fidelity demo --attack SquareRacing
+python -m topk_fidelity show-config --config configs/cifar10.json
+```
 
-\[
-\Pr_\omega\!\left[\operatorname{set}(\operatorname{TopK}(f_D(x';\omega),k))
-= S_k(x)\right].
-\]
+The CPU examples use tiny synthetic models and images. Their numbers are
+demonstration output and are not manuscript results. For the historical
+dataset-backed programs, install `".[experiments]"` as well. Supported package
+requirements are in [pyproject.toml](pyproject.toml); the locally tested
+environment is recorded in [docs/VALIDATION.md](docs/VALIDATION.md).
 
-The primary protocol evaluates each stochastic response separately. Averaging
-logits before computing the set is a secondary diagnostic, not the primary
-metric. Every constituent stochastic draw is charged as one API query.
+## Code map
 
-## Repository map
-
-| Path | Purpose |
+| Path | Responsibility |
 |---|---|
-| `src/topk_fidelity/` | Small, documented implementation of the wrapper, metrics, and query accounting |
-| `experiments/frozen/` | Sanitized protocol snapshot of the experiment, launcher, re-evaluation, finalization, and audit scripts |
-| `tests/` | CPU unit tests for the reusable package |
-| `results/` | Small manuscript-facing result tables; no large tensors or checkpoints |
-| `docs/REPRODUCIBILITY.md` | Data layout, stages, and reproduction checklist |
-| `docs/GITHUB_PUBLISHING_FA.md` | Persian GitHub publication guide |
+| `src/topk_fidelity/defense.py` | Original online reference, strengthening and full-logit response |
+| `src/topk_fidelity/config.py` | Validated parameters and method ablations |
+| `src/topk_fidelity/attacks/` | Original objectives, query plans, proposals, archives and search loops |
+| `src/topk_fidelity/query.py` | Per-image response accounting and both mean-logit reduction routes |
+| `src/topk_fidelity/metrics.py`, `evaluation.py` | Unordered-set metrics and independent per-response endpoint evaluation |
+| `src/topk_fidelity/models/` | Original CIFAR architectures, normalization and checkpoint loaders |
+| `src/topk_fidelity/training/losses.py` | Original teacher Top-2 ranking and distillation losses |
+| `configs/` | Explicit CIFAR-10, CIFAR-100, ImageNet/ResNet and ImageNet/ViT settings |
+| `experiments/frozen/` | Recorded training, preparation, search, finalization and audit programs |
+| `tests/` | CPU comparisons against the actual archived source |
+| `results/` | Small summaries from the revised manuscript; no new experiments |
 
-Large datasets, model checkpoints, attack candidates, and generated outputs are
-excluded from version control.
+The old imports from `topk_fidelity.defense` and `topk_fidelity.attacks.square`
+remain usable. [docs/refactor_provenance.json](docs/refactor_provenance.json)
+maps moved symbols to source files, line spans and hashes.
 
-## Install
+## Use with your models
 
-Python 3.10+ is recommended. Create an isolated environment, install a PyTorch
-build appropriate for your machine, and then install this repository:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-python -m pip install --upgrade pip
-python -m pip install -e ".[test]"
-```
-
-For the frozen end-to-end programs, also install the experiment extras:
-
-```bash
-python -m pip install -e ".[experiments,test]"
-```
-
-PyTorch/CUDA wheels are platform-specific. For GPU runs, install the matching
-PyTorch build first, following the official PyTorch selector.
-
-## Minimal use
+Both models receive pixels in `[0,1]` and normalize internally. Freeze model
+parameters and use evaluation mode; the defense still needs input gradients.
 
 ```python
-from topk_fidelity import CleanReferenceTopKDefense, DefenseConfig
-
-config = DefenseConfig(
-    top_k=2,
-    steps=2,
-    epsilon=0.03,
-    alpha=0.005,
-    sigma=0.02144277648925781,
-    top1_weight=1.0,
-    set_weight=4.0,
+from topk_fidelity import (
+    CleanReferenceTopKDefense,
+    ExperimentConfig,
+    evaluate_responses,
 )
+from topk_fidelity.models import load_cifar10_models
 
+settings = ExperimentConfig.from_file("configs/cifar10.json")
+reference, anchor = load_cifar10_models(
+    "checkpoints/resnet20_cifar10.pth",
+    "checkpoints/resnet20_staged_epsilon_final_weights.pt",
+    device="cpu",
+)
 defense = CleanReferenceTopKDefense(
-    standard_model=reference_model,
-    gradient_model=robust_model,
-    output_model=robust_model,
-    config=config,
+    standard_model=reference,
+    gradient_model=anchor,
+    output_model=anchor,
+    config=settings.defense.for_method("full"),
 )
-draw_logits = defense.draw_logits(images, draws=1000)
+logits = defense(images)  # [batch, ALL classes]
 ```
 
-See [examples/minimal_wrapper.py](examples/minimal_wrapper.py) for a complete
-toy example.
+`load_cifar10_models` uses only the normalized `robust_branch` of the dual
+checkpoint. `load_cifar100_models` loads the original standard and teacher-Top2
+anchor weights. For ImageNet, pass the already verified, normalized reference
+and ResNet-50 anchor to the same defense API. In the ViT setting, ViT-B/16 is
+the **online reference**; the gradient and output network is ResNet-50.
 
-## Frozen protocol
+## Evaluate existing CIFAR tensors
 
-The confirmatory settings currently represented in the snapshot are:
-
-| Dataset | k | Attack radius | Confirmatory budget | MC re-evaluation |
-|---|---:|---:|---:|---:|
-| CIFAR-10 | 2 | 2/255 | 5,000 queries | 1,000 draws |
-| CIFAR-100 | 2 | 2/255 | 5,000 queries | 1,000 draws |
-| ImageNet / ResNet reference | 5 | 4/255 | 5,000 queries | 1,000 draws |
-| ImageNet / ViT reference | 5 | 4/255 | frozen VR4 protocol | pending completion |
-
-Three attack seeds and paired uncertainty estimates are used in the
-confirmatory analyses. Pilot search and confirmatory evaluation are separated;
-the confirmatory split is not used to tune the defense or attack.
-
-The experiment scripts preserve their stage labels (`R0`--`R7` and
-`VR1`--`VR4`) because later programs verify parent artifacts and source hashes.
-Start with [experiments/frozen/README.md](experiments/frozen/README.md) rather
-than executing an arbitrary launcher.
-
-## Verification
+A tensor file must contain float32 `images` shaped `[N,3,32,32]`, int64 `labels`,
+and unique `image_ids`. The command records checkpoint/input hashes, effective
+parameters and per-image query counts:
 
 ```bash
-python -m compileall -q src experiments/frozen tests
-python scripts/audit_release.py
+python -m topk_fidelity evaluate-tensors \
+  --config configs/cifar10.json \
+  --inputs datasets/selected_images.pt \
+  --reference-checkpoint checkpoints/resnet20_cifar10.pth \
+  --anchor-checkpoint checkpoints/resnet20_staged_epsilon_final_weights.pt \
+  --method full --attack SquareAdaptive --seed 11071 \
+  --device cpu --batch-size 4 --output-dir outputs/cifar10_full
+```
+
+The command writes `per_image.csv` and `run.json` to an empty output directory.
+It evaluates the supplied tensors; it does not infer the paper's frozen split,
+pilot authorization, or historical seed labels for every dataset. Use the
+[original stage guide](docs/REPRODUCIBILITY.md) to replay manuscript protocols.
+The new CLI and original pipeline are separate entry points.
+
+## Protocol details that matter
+
+- The evaluator/attacker's target is the **clean** reference set `S_k(x)`.
+  The defense recomputes its **online** set on each requested input and holds
+  that set fixed only within that request's strengthening steps.
+- Strengthening performs projected sign-gradient **ascent** on
+  `1 × winner margin + 4 × set-boundary margin`. Its radius is separate
+  from the attack radius.
+- Noise is added after strengthening, followed by pixel clipping. Each response
+  returns **all class logits**. Top-k evaluation does not establish preservation
+  of the other logits, their magnitudes, calibration or medical utility.
+- ExactSet compares unordered sets. Ground-truth Top-1 accuracy, reference
+  winner agreement, ground-truth coverage and set overlap are different metrics.
+- Primary stochastic metrics score **each response before averaging**.
+  SquareAdaptive minimizes the margin of mean logits. SquareRacing minimizes
+  the mean per-draw sigmoid margin. Those objectives remain distinct.
+- Initialization, EOT, refresh, races and in-attack confirmation all consume the
+  5,000-response budget **per image, family and seed**. Independent endpoint
+  MC evaluation uses 1,000 draws for stochastic methods, outside that budget,
+  and must not select a new candidate.
+- CIFAR-10's deterministic Adaptive path has zero refresh and sequential logit
+  accumulation. The generic CIFAR-100/ImageNet route retains its original
+  refresh setting and stacked mean. Both are explicit in the JSON settings.
+- CIFAR-100 and ImageNet family choices were frozen using disjoint pilots.
+  CIFAR-10 chose a global family per method on the same final holdout; that
+  selection limitation remains part of the interpretation.
+
+See [docs/PROTOCOL.md](docs/PROTOCOL.md) for parameters, attack use and limits.
+Use `torch.no_grad()` for outer evaluation contexts; strengthening cannot run
+inside `torch.inference_mode()` because it requires input gradients.
+
+## Check the refactor
+
+```bash
+ruff check .
+ruff format --check .
+python -m compileall -q src tests examples experiments/frozen
 pytest -q
+python scripts/audit_release.py
 sha256sum -c MANIFEST.sha256
 ```
 
-CI runs the same release audit and unit tests on every push. Dataset-backed
-experiments are intentionally not run in CI. `MANIFEST.sha256` identifies the
-exact files in this public snapshot.
+Tests compare original and refactored logits, objective gradients, actual
+ResNet checkpoint routes, attack candidates and query ledgers on CPU. They
+also exercise the tensor CLI. GPU training and full dataset experiments have
+not been repeated for this refactor. No speedup or new robustness claim is made.
 
-## Current result snapshot
+## Results and release metadata
 
-The existing ResNet-reference confirmatory values are recorded in
-[results/paper_summary.csv](results/paper_summary.csv). The ViT-reference
-confirmatory branch is marked **pending** and must not be presented as a final
-result until its VR4 audit succeeds.
+[results/paper_summary.csv](results/paper_summary.csv) reflects the revised
+Pattern Analysis and Applications manuscript, including the completed
+ViT-reference summary. These are existing experiment summaries, not outputs
+of the CPU examples. The original weights and datasets are not in this archive.
 
-## Citation and license
-
-During double-blind review, `CITATION.cff.template` deliberately contains no
-identifying author information. After the review decision, fill it, rename it
-to `CITATION.cff`, and tag the exact artifact version.
-
-Original code in this repository is released under the [MIT License](LICENSE).
-Adapted Square-attack components retain their upstream BSD 3-Clause notice in
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). Dataset and pretrained-model
-licenses remain with their respective owners.
+The existing [MIT license](LICENSE) and
+[Square Attack BSD notice](THIRD_PARTY_NOTICES.md) are retained.
+`CITATION.cff.template` is an unfinished metadata template; fill the real
+authors and repository URL before publishing a release. No repository URL,
+DOI or publication status is fabricated.

@@ -1,15 +1,10 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite the associated paper and artifact."
+message: "Complete real author and repository metadata before publishing this template."
 title: "Clean-Reference Top-k Fidelity"
 type: software
-version: 0.1.0
-date-released: 2026-09-20
+version: 0.2.0
 authors:
   - name: "Anonymous Authors"
 license: MIT
-repository-code: "https://github.com/OWNER/clean-reference-topk-fidelity"
-# After double-blind review:
-# 1. replace the author block and repository URL;
-# 2. add the paper title/DOI under preferred-citation;
-# 3. rename this file to CITATION.cff;
-# 4. validate it before tagging the release.
+# Add the actual authors, date-released, repository-code and available paper ID.
+# Validate the completed metadata, then rename this file to CITATION.cff.

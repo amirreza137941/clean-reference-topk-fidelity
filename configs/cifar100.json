@@ -1,0 +1,48 @@
+{
+  "dataset": "cifar100",
+  "reference_family": "resnet20",
+  "defense": {
+    "top_k": 2,
+    "alpha": 0.004999999999999999,
+    "epsilon": 0.03137254901960784,
+    "steps": 2,
+    "sigma": 0.015,
+    "top1_weight": 1.0,
+    "set_weight": 4.0
+  },
+  "attack_epsilon": 0.00784313725490196,
+  "api_budget": 5000,
+  "p_init": 0.3,
+  "search_seeds": [
+    71071,
+    82073,
+    93083
+  ],
+  "reevaluation_draws": 1000,
+  "adaptive": {
+    "search_eot": 1,
+    "refresh_eot": 1,
+    "confirm_candidates": 5,
+    "confirm_fraction": 0.2,
+    "objective": "exact_set_margin_of_mean_logits"
+  },
+  "racing": {
+    "search_eot": 5,
+    "refresh_eot": 5,
+    "pool_size": 8,
+    "race_interval": 25,
+    "race_eot": 5,
+    "confirm_fraction": 0.25,
+    "score_temperature": 0.1,
+    "objective": "mean_per_draw_sigmoid_exact_set_margin"
+  },
+  "deterministic_adaptive_refresh": 1,
+  "method_attack": {
+    "robust": "SquareRacing",
+    "full_sigma0": "SquareRacing",
+    "noise_only": "SquareAdaptive",
+    "full": "SquareAdaptive"
+  },
+  "family_selection": "disjoint_pilot_frozen_per_method",
+  "mean_logit_reduction": "stack_mean"
+}

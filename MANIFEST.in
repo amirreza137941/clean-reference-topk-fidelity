@@ -1,0 +1,11 @@
+include README.md README_FA.md LICENSE THIRD_PARTY_NOTICES.md
+include requirements.txt CITATION.cff.template MANIFEST.sha256
+include .gitignore .gitattributes CHANGELOG.md CONTRIBUTING.md SECURITY.md
+recursive-include .github *.yml
+recursive-include configs *.json
+recursive-include docs *.md *.json
+recursive-include examples *.py
+recursive-include scripts *.py
+recursive-include results *.md *.csv
+recursive-include tests *.py
+recursive-include experiments/frozen *.py *.md *.csv

@@ -1,30 +1,14 @@
-# Anonymous artifact policy
+# Release metadata
 
-This repository snapshot is prepared for double-blind review.
+This archive inherits neutral author metadata from the earlier snapshot.
+The journal target is Pattern Analysis and Applications, and the intended
+workflow includes a preprint before journal submission. This repository does
+not impose the earlier conference-specific double-blind publication rules.
 
-## Keep during review
+Before a public release, complete the real authors, title and repository URL
+in CITATION.cff.template, then validate and rename it to CITATION.cff. Add a
+paper/preprint identifier only once it exists. Review requirements must be
+checked against the actual submission's current journal instructions.
 
-- Author metadata remains `Anonymous Authors`.
-- The personal upstream repository remains private.
-- Reviewers receive a frozen, anonymous mirror of one exact commit.
-- Source, documentation, commit messages, paths, result metadata, and archives
-  are checked for identifying strings before the mirror is created.
-- The anonymous mirror is not modified during review unless the venue's policy
-  explicitly authorizes a revision.
-
-## Do not add during review
-
-- names, initials, affiliations, ORCIDs, personal email addresses, or personal
-  GitHub profile links;
-- acknowledgements, grant identifiers, lab server names, or private paths;
-- links to public preprints or repositories that reveal authorship;
-- badges whose target URL contains the personal repository owner;
-- public issues, forks, stars, or social posts connecting an identity to the
-  anonymous artifact.
-
-## After review
-
-Complete and rename `CITATION.cff.template`, update the security contact and
-repository URLs, add the accepted-paper reference, and make a tagged release.
-Archive the release in a DOI-granting repository rather than relying only on a
-mutable branch.
+No preprint, DOI, public repository or accepted-paper status is created by
+this code refactor.
